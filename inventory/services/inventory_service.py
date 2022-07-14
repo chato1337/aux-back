@@ -1,9 +1,8 @@
-from inventory.models import Store
-
+from inventory.models import Product
 
 class InventoryService:
     def createInventory(data):
-        newInventory = Store.objects.create(
+        newInventory = Product.objects.create(
             name=data["name"],
             category=data["category"],
             stock=data["stock"],
