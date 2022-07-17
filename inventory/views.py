@@ -16,11 +16,14 @@ class GetView(APIView):
 class AddView(APIView):
     def post(self, request):
 
-        serializer = CreateProductSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        product = serializer.save()
+        # serializer = CreateProductSerializer(data=request.data)
+        # serializer.is_valid(raise_exception=True)
+        # product = serializer.save()
 
-        return Response(ProductSerializer(product).data)
+        # return Response(ProductSerializer(product).data)
+        return Response(
+            ProductSerializer(InventoryService.createInventory(request.data)).data
+        )
 
 class GetSuppliersView(APIView):
     def get(self, request):
