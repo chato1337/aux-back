@@ -5,6 +5,8 @@ from inventory import views
 
 
 urlpatterns = [
-    path('get/', views.GetView.as_view(), name="inventories"),
-    path('add/', views.AddView.as_view(), name="add-stock"),
+    path('product/', views.GetView.as_view(), name="product"),
+    path('product/add/', views.AddView.as_view(), name="add-product"),
+    path('supplier/', views.GetSuppliersView.as_view(), name="supplier"),
+    path('supplier/add/', views.AddSupplierView.as_view(), name="add-supplier")
 ]

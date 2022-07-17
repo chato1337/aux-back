@@ -17,8 +17,10 @@ from django.contrib import admin
 from django.urls import path
 from django.urls.conf import include
 
+base_url = 'api/v1/'
+
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api/inventory/', include('inventory.urls')),
-    path('api/stock/', include('stock.urls'))
+    path(base_url + 'inventory/', include('inventory.urls')),
+    path(base_url + 'stock/', include('stock.urls'))
 ]

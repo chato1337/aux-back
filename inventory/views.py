@@ -1,8 +1,7 @@
-from typing import Tuple
-from inventory.serializers import InventorySerializer
-from inventory.models import Product
+from inventory import serializers
+from inventory.serializers import CreateProductSerializer, CreateSupplierSerializer, ProductSerializer, SupplierSerializer
+from inventory.models import Product, Supplier
 from inventory.services.inventory_service import InventoryService
-from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 
@@ -10,13 +9,31 @@ from rest_framework.response import Response
 class GetView(APIView):
     def get(self, request):
         inventory_list = Product.objects.all()
-        serializer = InventorySerializer(inventory_list, many=True)
+        serializer = ProductSerializer(inventory_list, many=True)
 
         return Response(serializer.data)
 
 class AddView(APIView):
     def post(self, request):
 
-        InventoryService.createInventory(request.data)
+        serializer = CreateProductSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        product = serializer.save()
 
-        return Response("store added!")
+        return Response(ProductSerializer(product).data)
+
+class GetSuppliersView(APIView):
+    def get(self, request):
+        supplier_list = Supplier.objects.all()
+
+        serializer = SupplierSerializer(supplier_list, many=True)
+
+        return Response(serializer.data)
+
+class AddSupplierView(APIView):
+    def post(self, request):
+        serializer = CreateSupplierSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        supplier = serializer.save()
+
+        return Response(SupplierSerializer(supplier).data)

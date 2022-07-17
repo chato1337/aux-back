@@ -16,6 +16,7 @@ class Product(models.Model):
     supplier = models.ForeignKey(Supplier, null=True, on_delete=models.CASCADE)
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=300)
+    price = models.FloatField()
     category = models.ForeignKey(Category, null=True, on_delete=models.CASCADE)
     expiration_date = models.DateField()
     entry_date = models.DateTimeField(auto_now=True)
