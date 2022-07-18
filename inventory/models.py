@@ -5,12 +5,18 @@ class Category(models.Model):
     name = models.CharField(max_length=30)
     description = models.CharField(max_length=300)
 
+    def __str__(self):
+        return self.name
+
 class Supplier(models.Model):
     name = models.CharField(max_length=30)
     identifier = models.CharField(max_length=30)
     phone = models.CharField(max_length=12)
     email = models.CharField(max_length=30)
     other_details = models.CharField(max_length=150, null=True)
+
+    def __str__(self):
+        return self.name
 
 class Product(models.Model):
     supplier = models.ForeignKey(Supplier, null=True, on_delete=models.CASCADE)

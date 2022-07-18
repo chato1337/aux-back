@@ -17,11 +17,6 @@ class CreateSupplierSerializer(serializers.Serializer):
     def create(self, data):
         return Supplier.objects.create(**data)
 
-class ProductSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Product
-        exclude = []
-
 class CreateProductSerializer(serializers.Serializer):
     supplier = SupplierSerializer()
     name = serializers.CharField(max_length=64)
@@ -49,3 +44,10 @@ class CreateCategorySerializer(serializers.Serializer):
     def create(self, data):
         return Category.objects.create(**data)
 
+class ProductSerializer(serializers.ModelSerializer):
+    category = serializers.StringRelatedField()
+    supplier = serializers.StringRelatedField()
+
+    class Meta:
+        model = Product
+        exclude = []

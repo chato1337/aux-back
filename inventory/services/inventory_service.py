@@ -1,4 +1,4 @@
-from inventory.models import Product, Supplier
+from inventory.models import Category, Product, Supplier
 
 class InventoryService:
     def createInventory(data):
@@ -7,7 +7,7 @@ class InventoryService:
             name=data["name"],
             description="N/A",
             price=data["price"],
-            # category=data["category"],
+            category=Category.objects.get(pk=data["category"]),
             stock=data["stock"],
             unit=data["unit"],
             expiration_date=data["expiration_date"],
