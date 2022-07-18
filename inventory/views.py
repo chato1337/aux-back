@@ -1,6 +1,6 @@
 from inventory import serializers
-from inventory.serializers import CreateProductSerializer, CreateSupplierSerializer, ProductSerializer, SupplierSerializer
-from inventory.models import Product, Supplier
+from inventory.serializers import CategorySerializer, CreateCategorySerializer, CreateProductSerializer, CreateSupplierSerializer, ProductSerializer, SupplierSerializer
+from inventory.models import Category, Product, Supplier
 from inventory.services.inventory_service import InventoryService
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -40,3 +40,20 @@ class AddSupplierView(APIView):
         supplier = serializer.save()
 
         return Response(SupplierSerializer(supplier).data)
+
+class AddCategoryView(APIView):
+    def post(self, request):
+        serializer = CreateCategorySerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        category = serializer.save()
+
+        return Response(CategorySerializer(category).data)
+class GetCategoryView(APIView):
+    def get(self, request):
+        category_list = Category.objects.all()
+
+        serializer = CategorySerializer(category_list, many=True)
+
+        return Response(serializer.data)
+
+        

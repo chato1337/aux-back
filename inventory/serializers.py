@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from inventory.models import Product, Supplier
+from inventory.models import Product, Supplier, Category
 
 
 class SupplierSerializer(serializers.ModelSerializer):
@@ -36,3 +36,16 @@ class CreateProductSerializer(serializers.Serializer):
 
     def create(self, data):
         return Product.objects.create(**data)
+
+class CategorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Category
+        exclude = []
+
+class CreateCategorySerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=30)
+    description = serializers.CharField(max_length=300)
+
+    def create(self, data):
+        return Category.objects.create(**data)
+
