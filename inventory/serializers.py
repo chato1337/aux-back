@@ -43,6 +43,13 @@ class CreateCategorySerializer(serializers.Serializer):
 
     def create(self, data):
         return Category.objects.create(**data)
+    
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.save()
+
+        return instance
 
 class ProductSerializer(serializers.ModelSerializer):
     category = serializers.StringRelatedField()

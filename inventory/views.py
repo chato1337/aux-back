@@ -56,4 +56,11 @@ class GetCategoryView(APIView):
 
         return Response(serializer.data)
 
-        
+class EditCategoryView(APIView):
+    def put(self, request):
+        category = Category.objects.get(pk=request.data['id'])
+        serializer = CreateCategorySerializer(category, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        updated_category = serializer.save()
+
+        return Response(CategorySerializer(updated_category).data)

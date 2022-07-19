@@ -10,5 +10,6 @@ urlpatterns = [
     path('supplier/', views.GetSuppliersView.as_view(), name="supplier"),
     path('supplier/add/', views.AddSupplierView.as_view(), name="add-supplier"),
     path('category/', views.GetCategoryView.as_view(), name="add-category"),
+    path('category/edit/', views.EditCategoryView.as_view(), name="edit-category"),
     path('category/add/', views.AddCategoryView.as_view(), name="category")
 ]
