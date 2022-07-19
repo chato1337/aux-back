@@ -17,20 +17,6 @@ class CreateSupplierSerializer(serializers.Serializer):
     def create(self, data):
         return Supplier.objects.create(**data)
 
-class CreateProductSerializer(serializers.Serializer):
-    supplier = SupplierSerializer()
-    name = serializers.CharField(max_length=64)
-    description = serializers.CharField(max_length=300)
-    # category = serializers.IntegerField()
-    price = serializers.FloatField()
-    expiration_date = serializers.DateField()
-    entry_date = serializers.DateTimeField()
-    stock = serializers.IntegerField()
-    unit = serializers.CharField(max_length=32)
-    is_active = serializers.CharField(max_length=16)
-
-    def create(self, data):
-        return Product.objects.create(**data)
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -52,9 +38,25 @@ class CreateCategorySerializer(serializers.Serializer):
         return instance
 
 class ProductSerializer(serializers.ModelSerializer):
-    category = serializers.StringRelatedField()
-    supplier = serializers.StringRelatedField()
+    category = CategorySerializer()
+    supplier = SupplierSerializer()
 
     class Meta:
         model = Product
         exclude = []
+
+class CreateProductSerializer(serializers.Serializer):
+    # supplier = serializers.ModelField(model_field=Supplier()._meta.get_field('pk'))
+    name = serializers.CharField(max_length=64)
+    description = serializers.CharField(max_length=300)
+    # category = serializers.IntegerField()
+    price = serializers.FloatField()
+    expiration_date = serializers.DateField()
+    entry_date = serializers.DateTimeField()
+    stock = serializers.IntegerField()
+    unit = serializers.CharField(max_length=32)
+    is_active = serializers.CharField(max_length=16)
+
+    def create(self, data):
+        print(data)
+        # return Product.objects.create(**data)

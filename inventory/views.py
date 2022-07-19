@@ -15,9 +15,9 @@ class GetView(APIView):
 
 class AddView(APIView):
     def post(self, request):
-
+        # print(request.data)
         # serializer = CreateProductSerializer(data=request.data)
-        # serializer.is_valid(raise_exception=True)
+        # serializer.is_valid()
         # product = serializer.save()
 
         # return Response(ProductSerializer(product).data)

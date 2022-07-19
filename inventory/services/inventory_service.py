@@ -7,7 +7,7 @@ class InventoryService:
             name=data["name"],
             description="N/A",
             price=data["price"],
-            category=Category.objects.get(pk=data["category"]),
+            category=Category.objects.get(pk=data["category_id"]),
             stock=data["stock"],
             unit=data["unit"],
             expiration_date=data["expiration_date"],
