@@ -28,7 +28,12 @@ class CreateCategorySerializer(serializers.Serializer):
     description = serializers.CharField(max_length=300)
 
     def create(self, data):
-        return Category.objects.create(**data)
+        obj, created = Category.objects.get_or_create(name=data["name"], defaults={ 'description': data["description"] })
+
+        if created:
+            return obj
+        else:
+            raise serializers.ValidationError(f"the category {obj} already exist")
     
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
