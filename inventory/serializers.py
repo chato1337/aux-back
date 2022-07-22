@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from inventory.models import Product, Supplier, Category
-
+from rest_framework.validators import UniqueValidator
 
 class SupplierSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,16 +24,18 @@ class CategorySerializer(serializers.ModelSerializer):
         exclude = []
 
 class CreateCategorySerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=30)
+    # name = serializers.CharField(max_length=30)
+    name = serializers.CharField(max_length=30, validators=[UniqueValidator(queryset=Category.objects.all())])
     description = serializers.CharField(max_length=300)
 
     def create(self, data):
-        obj, created = Category.objects.get_or_create(name=data["name"], defaults={ 'description': data["description"] })
+        # obj, created = Category.objects.get_or_create(name=data["name"], defaults={ 'description': data["description"] })
 
-        if created:
-            return obj
-        else:
-            raise serializers.ValidationError(f"the category {obj} already exist")
+        # if created:
+        #     return obj
+        # else:
+        #     raise serializers.ValidationError(f"the category {obj} already exist")
+        return Category.objects.create(**data)
     
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
@@ -51,7 +53,7 @@ class ProductSerializer(serializers.ModelSerializer):
         exclude = []
 
 class CreateProductSerializer(serializers.Serializer):
-    # supplier = serializers.ModelField(model_field=Supplier()._meta.get_field('pk'))
+    # supplier = serializers.SlugRelatedField(Supplier.objects.all(), slug_field="name")
     name = serializers.CharField(max_length=64)
     description = serializers.CharField(max_length=300)
     # category = serializers.IntegerField()
@@ -65,3 +67,7 @@ class CreateProductSerializer(serializers.Serializer):
     def create(self, data):
         print(data)
         # return Product.objects.create(**data)
+
+    class Meta:
+        extra_kwargs = {'supplier': {'required': False}, 'category': {'required': False}}
+
