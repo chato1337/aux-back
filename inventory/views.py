@@ -1,9 +1,16 @@
-from inventory import serializers
-from inventory.serializers import CategorySerializer, CreateCategorySerializer, CreateProductSerializer, CreateSupplierSerializer, ProductSerializer, SupplierSerializer
-from inventory.models import Category, Product, Supplier
-from inventory.services.inventory_service import InventoryService
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import generics
+from rest_framework.filters import SearchFilter, OrderingFilter
+from inventory.models import Category, Product, Supplier
+from inventory.serializers import (
+    CategorySerializer,
+    CreateCategorySerializer,
+    CreateProductSerializer,
+    CreateSupplierSerializer,
+    ProductSerializer,
+    SupplierSerializer
+)
 
 # Create your views here.
 class GetView(APIView):
@@ -12,18 +19,15 @@ class GetView(APIView):
         serializer = ProductSerializer(inventory_list, many=True)
 
         return Response(serializer.data)
+        
 
 class AddView(APIView):
     def post(self, request):
-        print(request.data)
         serializer = CreateProductSerializer(data=request.data)
         serializer.is_valid()
         product = serializer.save()
 
         return Response(ProductSerializer(product).data)
-        # return Response(
-        #     ProductSerializer(InventoryService.createInventory(request.data)).data
-        # )
 
 class GetSuppliersView(APIView):
     def get(self, request):
@@ -32,6 +36,7 @@ class GetSuppliersView(APIView):
         serializer = SupplierSerializer(supplier_list, many=True)
 
         return Response(serializer.data)
+
 
 class AddSupplierView(APIView):
     def post(self, request):
@@ -48,13 +53,18 @@ class AddCategoryView(APIView):
         category = serializer.save()
 
         return Response(CategorySerializer(category).data)
-class GetCategoryView(APIView):
-    def get(self, request):
-        category_list = Category.objects.all()
 
-        serializer = CategorySerializer(category_list, many=True)
+class GetCategoryView(generics.ListAPIView):
+    serializer_class = CategorySerializer
+    filter_backends = (SearchFilter, OrderingFilter)
+    search_fields = ('name',)
+    def get_queryset(self):
+        # print(self)
+        queryset = Category.objects.all()
 
-        return Response(serializer.data)
+        serializer = CategorySerializer(queryset, many=True)
+
+        return queryset
 
 class EditCategoryView(APIView):
     def put(self, request):
