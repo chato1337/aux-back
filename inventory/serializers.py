@@ -8,15 +8,24 @@ class SupplierSerializer(serializers.ModelSerializer):
         exclude = []
 
 class CreateSupplierSerializer(serializers.Serializer):
-    name = serializers.CharField(max_length=30)
-    identifier = serializers.CharField(max_length=30)
-    phone = serializers.CharField(max_length=12)
-    email = serializers.CharField(max_length=30)
+    name = serializers.CharField(max_length=30, validators=[UniqueValidator(queryset=Supplier.objects.all())])
+    identifier = serializers.CharField(max_length=30, validators=[UniqueValidator(queryset=Supplier.objects.all())])
+    phone = serializers.CharField(max_length=12, validators=[UniqueValidator(queryset=Supplier.objects.all())])
+    email = serializers.CharField(max_length=30, validators=[UniqueValidator(queryset=Supplier.objects.all())])
     other_details = serializers.CharField(max_length=150)
 
     def create(self, data):
         return Supplier.objects.create(**data)
+    
+    def update(self, instance, validated_data):
+        instance.name = validated_data.get('name', instance.name)
+        instance.identifier = validated_data.get('identifier', instance.identifier)
+        instance.phone = validated_data.get('phone', instance.phone)
+        instance.email = validated_data.get('email', instance.email)
+        instance.other_details = validated_data.get('other_details', instance.other_details)
+        instance.save()
 
+        return instance
 
 class CategorySerializer(serializers.ModelSerializer):
     class Meta:
@@ -29,12 +38,6 @@ class CreateCategorySerializer(serializers.Serializer):
     description = serializers.CharField(max_length=300)
 
     def create(self, data):
-        # obj, created = Category.objects.get_or_create(name=data["name"], defaults={ 'description': data["description"] })
-
-        # if created:
-        #     return obj
-        # else:
-        #     raise serializers.ValidationError(f"the category {obj} already exist")
         return Category.objects.create(**data)
     
     def update(self, instance, validated_data):

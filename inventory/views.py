@@ -13,12 +13,15 @@ from inventory.serializers import (
 )
 
 # Create your views here.
-class GetView(APIView):
-    def get(self, request):
-        inventory_list = Product.objects.all()
-        serializer = ProductSerializer(inventory_list, many=True)
+class GetView(generics.ListAPIView):
+    serializer_class = SupplierSerializer
+    filter_backends = (SearchFilter, OrderingFilter)
+    search_fields = ('name',)
+    ordering_fields = ('name', 'unit', 'entry_date', 'pk')
 
-        return Response(serializer.data)
+    def get_queryset(self):
+        queryset = Product.objects.all()
+        return queryset
         
 
 class AddView(APIView):
@@ -29,13 +32,15 @@ class AddView(APIView):
 
         return Response(ProductSerializer(product).data)
 
-class GetSuppliersView(APIView):
-    def get(self, request):
-        supplier_list = Supplier.objects.all()
+class GetSuppliersView(generics.ListAPIView):
+    serializer_class = SupplierSerializer
+    filter_backends = (SearchFilter, OrderingFilter)
+    search_fields = ('name',)
+    ordering_fields = ('name', 'identifier', 'phone', 'email', 'pk', )
 
-        serializer = SupplierSerializer(supplier_list, many=True)
-
-        return Response(serializer.data)
+    def get_queryset(self):
+        queryset = Supplier.objects.all()
+        return queryset
 
 
 class AddSupplierView(APIView):
@@ -45,6 +50,15 @@ class AddSupplierView(APIView):
         supplier = serializer.save()
 
         return Response(SupplierSerializer(supplier).data)
+
+class EditSupplierView(APIView):
+    def put(self, request):
+        supplier = Supplier.objects.get(pk=request.data['id'])
+        serializer = CreateSupplierSerializer(supplier, data=request.data)
+        serializer.is_valid(raise_exception=True)
+        updated_supplier = serializer.save()
+
+        return Response(SupplierSerializer(updated_supplier).data)
 
 class AddCategoryView(APIView):
     def post(self, request):
@@ -58,12 +72,9 @@ class GetCategoryView(generics.ListAPIView):
     serializer_class = CategorySerializer
     filter_backends = (SearchFilter, OrderingFilter)
     search_fields = ('name',)
+    ordering_fields = ('name',)
     def get_queryset(self):
-        # print(self)
         queryset = Category.objects.all()
-
-        serializer = CategorySerializer(queryset, many=True)
-
         return queryset
 
 class EditCategoryView(APIView):
