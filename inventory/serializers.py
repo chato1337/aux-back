@@ -56,21 +56,35 @@ class ProductSerializer(serializers.ModelSerializer):
         exclude = []
 
 class CreateProductSerializer(serializers.Serializer):
-    # supplier = serializers.SlugRelatedField(Supplier.objects.all(), slug_field="name")
+    supplier = serializers.PrimaryKeyRelatedField(queryset=Supplier.objects.all())
     name = serializers.CharField(max_length=64)
     description = serializers.CharField(max_length=300)
-    # category = serializers.IntegerField()
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
     price = serializers.FloatField()
     expiration_date = serializers.DateField()
     entry_date = serializers.DateTimeField()
     stock = serializers.IntegerField()
     unit = serializers.CharField(max_length=32)
-    is_active = serializers.CharField(max_length=16)
+    # is_active = serializers.CharField(max_length=16)
 
     def create(self, data):
-        print(data)
-        # return Product.objects.create(**data)
+        return Product.objects.create(**data)
+
+    def update(self, instance, validated_data):
+        instance.supplier = validated_data.get('supplier', instance.supplier)
+        instance.name = validated_data.get('name', instance.name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.category = validated_data.get('category', instance.category)
+        instance.price = validated_data.get('price', instance.price)
+        instance.expiration_date = validated_data.get('expiration_date', instance.expiration_date)
+        instance.entry_date = validated_data.get('entry_date', instance.entry_date)
+        instance.stock = validated_data.get('stock', instance.stock)
+        instance.unit = validated_data.get('unit', instance.unit)
+        instance.is_active = validated_data.get('is_active', 'active')
+        instance.save()
+
+        return instance
 
     class Meta:
-        extra_kwargs = {'supplier': {'required': False}, 'category': {'required': False}}
+        extra_kwargs = {'supplier': {'required': False}, 'category': {'required': False}, 'is_active': {'required': False}}
 

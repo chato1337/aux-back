@@ -1,3 +1,4 @@
+from unicodedata import category
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import generics
@@ -14,7 +15,7 @@ from inventory.serializers import (
 
 # Create your views here.
 class GetView(generics.ListAPIView):
-    serializer_class = SupplierSerializer
+    serializer_class = ProductSerializer
     filter_backends = (SearchFilter, OrderingFilter)
     search_fields = ('name',)
     ordering_fields = ('name', 'unit', 'entry_date', 'pk')
@@ -26,11 +27,22 @@ class GetView(generics.ListAPIView):
 
 class AddView(APIView):
     def post(self, request):
-        serializer = CreateProductSerializer(data=request.data)
-        serializer.is_valid()
+        new_product = { **request.data, 'supplier': request.data['supplier_id'], 'category': request.data['category_id'] }
+        serializer = CreateProductSerializer(data=new_product)
+        serializer.is_valid(raise_exception=True)
         product = serializer.save()
 
         return Response(ProductSerializer(product).data)
+
+class EditView(APIView):
+    def put(self, request):
+        product = Product.objects.get(pk=request.data['id'])
+        edit_product = { **request.data, 'supplier': request.data['supplier_id'], 'category': request.data['category_id'] }
+        serializer = CreateProductSerializer(product, data=edit_product)
+        serializer.is_valid(raise_exception=True)
+        updated_product = serializer.save()
+
+        return Response(ProductSerializer(updated_product).data)
 
 class GetSuppliersView(generics.ListAPIView):
     serializer_class = SupplierSerializer
@@ -41,6 +53,12 @@ class GetSuppliersView(generics.ListAPIView):
     def get_queryset(self):
         queryset = Supplier.objects.all()
         return queryset
+
+class GetFullSuppliersView(APIView):
+    def get(self, request):
+        supplier_list = Supplier.objects.all()
+
+        return Response(SupplierSerializer(supplier_list, many=True).data)
 
 
 class AddSupplierView(APIView):
@@ -72,10 +90,16 @@ class GetCategoryView(generics.ListAPIView):
     serializer_class = CategorySerializer
     filter_backends = (SearchFilter, OrderingFilter)
     search_fields = ('name',)
-    ordering_fields = ('name',)
+    ordering_fields = ('name', 'pk',)
     def get_queryset(self):
         queryset = Category.objects.all()
         return queryset
+
+class GetFullCategoryView(APIView):
+    def get(self, request):
+        category_list = Category.objects.all()
+
+        return Response(CategorySerializer(category_list, many=True).data)
 
 class EditCategoryView(APIView):
     def put(self, request):
