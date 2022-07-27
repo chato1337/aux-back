@@ -35,7 +35,7 @@ class CreateUserSerializer(serializers.Serializer):
     phone = serializers.CharField(max_length=12, validators=[UniqueValidator(queryset=User.objects.all())])
     password = serializers.CharField(max_length=64)
     is_active = serializers.BooleanField()
-    created_at = serializers.DateTimeField()
+    # created_at = serializers.DateTimeField()
 
     def create(self, data):
         return User.objects.create(**data)
@@ -43,6 +43,9 @@ class CreateUserSerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         #test??
         return super().update(instance, validated_data)
+
+    class Meta:
+        extra_kwargs = {'created_at': {'required': False}}
 
 class StaffSerializer(serializers.ModelSerializer):
     user = UserSerializer()
@@ -56,13 +59,16 @@ class CreateStaffSerializer(serializers.Serializer):
     first_name = serializers.CharField(max_length=35)
     last_name = serializers.CharField(max_length=35)
     address = serializers.CharField(max_length=60)
-    created_at = serializers.DateTimeField()
+    # created_at = serializers.DateTimeField()
 
     def create(self, data):
-        return data.objects.create(**data)
+        return Staff.objects.create(**data)
 
     def update(self, instance, validated_data):
         return super().update(instance, validated_data)
+
+    class Meta:
+        extra_kwargs = {'created_at': {'required': False}}
 
 class CustomerSerializer(serializers.ModelSerializer):
     user = UserSerializer()
@@ -75,10 +81,13 @@ class CreateCustomerSerializer(serializers.Serializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     full_name = serializers.CharField(max_length=60)
     leverage = serializers.CharField(max_length=60)
-    created_at = serializers.DateTimeField()
+    # created_at = serializers.DateTimeField()
 
     def create(self, data):
         return Customer.objects.create(**data)
 
     def update(self, instance, validated_data):
         return super().update(instance, validated_data)
+
+    class Meta:
+        extra_kwargs = {'created_at': {'required': False}}

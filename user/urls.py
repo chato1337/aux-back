@@ -5,9 +5,9 @@ from user import views
 
 
 urlpatterns = [
-    path('user/', views.GetUserView.as_view(), name="user"),
-    path('user/add/', views.AddUserView.as_view(), name="add-user"),
-    path('user/edit/', views.EditUserView.as_view(), name="edit-user"),
+    path('', views.GetUserView.as_view(), name="user"),
+    path('add/', views.AddUserView.as_view(), name="add-user"),
+    path('edit/', views.EditUserView.as_view(), name="edit-user"),
     path('role/', views.GetRoleView.as_view(), name="role"),
     path('role/add/', views.AddRoleView.as_view(), name="add-role"),
     path('role/edit/', views.EditRoleView.as_view(), name="add-role"),

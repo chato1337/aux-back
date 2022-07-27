@@ -9,7 +9,7 @@ class Bill(models.Model):
     seller = models.ForeignKey(Staff, on_delete=models.CASCADE)
     payment_type = models.CharField(max_length=30)
     total = models.FloatField()
-    
+
 class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     bill = models.ForeignKey(Bill, on_delete=models.CASCADE)

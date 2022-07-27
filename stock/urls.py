@@ -5,6 +5,6 @@ from stock import views
 
 
 urlpatterns = [
-    path('get/', views.GetView.as_view(), name="stocks"),
-    path('add/', views.AddView.as_view(), name="create-stock"),
+    path('', views.GetBillView.as_view(), name="stocks"),
+    path('pay/', views.AddBillView.as_view(), name="pay"),
 ]
