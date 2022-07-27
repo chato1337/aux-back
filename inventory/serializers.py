@@ -16,7 +16,7 @@ class CreateSupplierSerializer(serializers.Serializer):
 
     def create(self, data):
         return Supplier.objects.create(**data)
-    
+
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.identifier = validated_data.get('identifier', instance.identifier)
@@ -39,7 +39,7 @@ class CreateCategorySerializer(serializers.Serializer):
 
     def create(self, data):
         return Category.objects.create(**data)
-    
+
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)

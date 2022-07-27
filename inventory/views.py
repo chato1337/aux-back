@@ -23,7 +23,7 @@ class GetView(generics.ListAPIView):
     def get_queryset(self):
         queryset = Product.objects.all()
         return queryset
-        
+
 
 class AddView(APIView):
     def post(self, request):

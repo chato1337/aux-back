@@ -22,5 +22,6 @@ base_url = 'api/v1/'
 urlpatterns = [
     path('admin/', admin.site.urls),
     path(base_url + 'inventory/', include('inventory.urls')),
-    path(base_url + 'stock/', include('stock.urls'))
+    path(base_url + 'stock/', include('stock.urls')),
+    path(base_url + 'user/', include('user.urls'))
 ]
