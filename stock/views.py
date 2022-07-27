@@ -4,19 +4,23 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from inventory.models import Product
 from inventory.serializers import CreateProductSerializer, ProductSerializer
-from stock.models import Order
+from stock.models import Bill, Order
 from stock.serializers import BillSerializer, CreateBillSerializer, CreateOrderSerializer, OrderSerializer
 from stock.services.stock_service import StockService
 from rest_framework.response import Response
+from rest_framework import generics
+from rest_framework.filters import SearchFilter, OrderingFilter
 
 # Create your views here.
-class GetBillView(APIView):
-    def get(self, request):
-        stock_list = Order.objects.all()
+class GetBillView(generics.ListAPIView):
+    serializer_class = BillSerializer
+    filter_backends = (SearchFilter, OrderingFilter)
+    search_fields = ('customer',)
+    odering_fields = ('created_at',)
 
-        serializer = OrderSerializer(stock_list, many=True)
+    def get_queryset(self):
+        return Bill.objects.all()
 
-        return Response(serializer.data)
 
 class AddBillView(APIView):
     def post(self, request):

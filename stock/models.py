@@ -10,11 +10,17 @@ class Bill(models.Model):
     payment_type = models.CharField(max_length=30)
     total = models.FloatField()
 
+    def __str__(self) -> str:
+        return self.pk
+
 class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    bill = models.ForeignKey(Bill, on_delete=models.CASCADE)
+    bill = models.ForeignKey(Bill, related_name="orders", on_delete=models.CASCADE)
     quantity = models.IntegerField()
     discount = models.IntegerField()
     total = models.FloatField()
     tax = models.IntegerField()
     created_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self) -> str:
+        return f"{self.product.name} {self.quantity}"
