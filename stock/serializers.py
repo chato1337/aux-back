@@ -34,6 +34,11 @@ class BillSerializer(serializers.ModelSerializer):
         model = Bill
         exclude = []
 
+class BillFlatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Bill
+        exclude = []
+
 class CreateBillSerializer(serializers.Serializer):
     customer = serializers.PrimaryKeyRelatedField(queryset=Customer.objects.all())
     seller = serializers.PrimaryKeyRelatedField(queryset=Staff.objects.all())

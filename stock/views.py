@@ -1,12 +1,9 @@
-from itertools import product
-from unicodedata import category
 from django.shortcuts import render
 from rest_framework.views import APIView
 from inventory.models import Product
 from inventory.serializers import CreateProductSerializer, ProductSerializer
 from stock.models import Bill, Order
-from stock.serializers import BillSerializer, CreateBillSerializer, CreateOrderSerializer, OrderSerializer
-from stock.services.stock_service import StockService
+from stock.serializers import BillFlatSerializer, BillSerializer, CreateBillSerializer, CreateOrderSerializer, OrderSerializer
 from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework.filters import SearchFilter, OrderingFilter
@@ -15,8 +12,8 @@ from rest_framework.filters import SearchFilter, OrderingFilter
 class GetBillView(generics.ListAPIView):
     serializer_class = BillSerializer
     filter_backends = (SearchFilter, OrderingFilter)
-    search_fields = ('customer',)
-    odering_fields = ('created_at',)
+    search_fields = ('id',)
+    ordering_fields = ('created_at', 'id',)
 
     def get_queryset(self):
         return Bill.objects.all()
@@ -37,7 +34,6 @@ class AddBillView(APIView):
         bill_serializer.is_valid(raise_exception=True)
 
         bill = bill_serializer.save()
-
         for item in request.data:
             #update stock for every product buyed in order
             product = Product.objects.get(pk=item['id'])
@@ -70,7 +66,7 @@ class AddBillView(APIView):
             updated_order = order_serializer.save()
 
         #update bill with total price
-        bill_dict = BillSerializer(bill).data
+        bill_dict = BillFlatSerializer(bill).data
         update_bill = { **bill_dict, 'total': total }
         total_bill_serializer = CreateBillSerializer(bill, data=update_bill)
         total_bill_serializer.is_valid(raise_exception=True)
