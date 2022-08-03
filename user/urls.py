@@ -16,5 +16,8 @@ urlpatterns = [
     path('staff/add/', views.AddStaffView.as_view(), name="add-staff"),
     path('customer/', views.GetCustomerView.as_view(), name="customer"),
     path('customer/edit/', views.EditCustomerView.as_view(), name="edit-customer"),
-    path('customer/add/', views.AddCustomerView.as_view(), name="add-customer")
+    path('customer/add/', views.AddCustomerView.as_view(), name="add-customer"),
+    path('organization/', views.GetOrganizationView.as_view(), name="organization"),
+    path('organization/add/', views.AddOrganizationView.as_view(), name="add-organization"),
+    path('organization/edit/', views.EditOrganizationView.as_view(), name="edit-organization")
 ]

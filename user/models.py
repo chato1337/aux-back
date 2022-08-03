@@ -9,8 +9,8 @@ class Role(models.Model):
 class User(models.Model):
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
     name = models.CharField(max_length=70)
-    email = models.CharField(max_length=20)
-    phone = models.CharField(max_length=12)
+    email = models.CharField(max_length=20, unique=True)
+    phone = models.CharField(max_length=12, unique=True)
     password = models.CharField(max_length=64)
     is_active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now=True)
@@ -27,3 +27,14 @@ class Customer(models.Model):
     full_name = models.CharField(max_length=60)
     leverage = models.CharField(max_length=30)
     created_at = models.DateTimeField(auto_now=True)
+
+class Organization(models.Model):
+    name = models.CharField(max_length=32, unique=True)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    identifier = models.CharField(max_length=17, unique=True)
+    phone = models.PositiveBigIntegerField(unique=True)
+    address = models.CharField(max_length=64)
+    email = models.EmailField(unique=True)
+
+    def __str__(self) -> str:
+        return f"{self.name} {self.identifier}"

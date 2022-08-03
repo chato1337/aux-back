@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from user.models import Customer, Role, Staff, User
+from user.models import Customer, Organization, Role, Staff, User
 from rest_framework.validators import UniqueValidator
 
 class RoleSerializer(serializers.ModelSerializer):
@@ -91,3 +91,23 @@ class CreateCustomerSerializer(serializers.Serializer):
 
     class Meta:
         extra_kwargs = {'created_at': {'required': False}}
+
+class OrganizationSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Organization
+        exclude = []
+
+class CreateOrganizationSerializer(serializers.Serializer):
+    name = serializers.CharField(max_length=32, validators=[UniqueValidator(queryset=Organization.objects.all())])
+    owner = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
+    identifier = serializers.CharField(max_length=17, validators=[UniqueValidator(queryset=Organization.objects.all())])
+    phone = serializers.IntegerField()
+    address = serializers.CharField(max_length=64)
+    email = serializers.EmailField()
+
+    def create(self, data):
+        return Organization.objects.create(**data)
+
+    def update(self, instance, validated_data):
+        return super().update(instance, validated_data)

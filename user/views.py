@@ -3,14 +3,16 @@ from rest_framework import generics
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
-from user.models import Customer, Role, Staff, User
+from user.models import Customer, Organization, Role, Staff, User
 
 from user.serializers import (
     CreateCustomerSerializer,
+    CreateOrganizationSerializer,
     CreateRoleSerializer,
     CreateStaffSerializer,
     CreateUserSerializer,
     CustomerSerializer,
+    OrganizationSerializer,
     RoleSerializer,
     StaffSerializer,
     UserSerializer
@@ -97,3 +99,24 @@ class AddCustomerView(APIView):
 
 class EditCustomerView(APIView):
     pass
+
+class GetOrganizationView(generics.ListAPIView):
+    serializer_class = OrganizationSerializer
+    filter_backends = (SearchFilter, OrderingFilter)
+    search_fields = ('name')
+    ordering_fields = ('id', 'name', 'phone', 'address')
+
+    def get_queryset(self):
+        return Organization.objects.all()
+
+class AddOrganizationView(APIView):
+    def post(self, request):
+        serializer = CreateOrganizationSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        organization = serializer.save()
+
+        return Response(OrganizationSerializer(organization).data)
+
+class EditOrganizationView(APIView):
+    def put(self, request):
+        pass

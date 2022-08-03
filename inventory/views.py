@@ -18,7 +18,7 @@ class GetView(generics.ListAPIView):
     serializer_class = ProductSerializer
     filter_backends = (SearchFilter, OrderingFilter)
     search_fields = ('name',)
-    ordering_fields = ('name', 'unit', 'entry_date', 'id')
+    ordering_fields = ('name', 'unit', 'entry_date', 'id', 'category')
 
     def get_queryset(self):
         queryset = Product.objects.all()
