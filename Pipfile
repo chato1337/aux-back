@@ -11,6 +11,7 @@ psycopg2 = "*"
 markdown = "*"
 django-filter = "*"
 django-extensions = "*"
+pyjwt = "*"
 
 [dev-packages]
 

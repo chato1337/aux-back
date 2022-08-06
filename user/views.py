@@ -4,6 +4,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.filters import SearchFilter, OrderingFilter
 from user.models import Customer, Organization, Role, Staff, User
+from rest_framework import status
 
 from user.serializers import (
     CreateCustomerSerializer,
@@ -15,6 +16,7 @@ from user.serializers import (
     OrganizationSerializer,
     RoleSerializer,
     StaffSerializer,
+    UserFlatSerializer,
     UserSerializer
 )
 
@@ -50,11 +52,26 @@ class GetUserView(generics.ListAPIView):
 
 class AddUserView(APIView):
     def post(self, request):
-        serializer = CreateUserSerializer(data=request.data)
+        username = request.data['email'].replace('@', '_')
+        role = Role.objects.get(name='owner')
+        role_serializer = RoleSerializer(role).data
+        user_data = { **request.data, 'name': username, 'role': role_serializer['id'], 'status': 'to-activate' }
+        serializer = CreateUserSerializer(data=user_data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
+        user_serializer = UserSerializer(user).data
 
-        return Response(UserSerializer(user).data)
+        staff_data = { **request.data, 'user': user_serializer['id'] }
+        staff_serializer = CreateStaffSerializer(data=staff_data)
+        staff_serializer.is_valid(raise_exception=True)
+        staff_serializer.save()
+
+        data = {
+            'user': user_serializer,
+            'token': 'awesometoken123'
+        }
+
+        return Response(data)
 
 class EditUserView(APIView):
     pass
@@ -113,10 +130,39 @@ class AddOrganizationView(APIView):
     def post(self, request):
         serializer = CreateOrganizationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        organization = serializer.save()
 
-        return Response(OrganizationSerializer(organization).data)
+        user = User.objects.get(pk=request.data['owner'])
+
+        user_serializer = UserFlatSerializer(user).data
+        user_status = { **user_serializer, 'status': 'active' }
+
+        update_user = CreateUserSerializer(user, user_status)
+        update_user.is_valid(raise_exception=True)
+        serializer_org = serializer.save()
+        status_user = update_user.save()
+
+        data = {
+            'user': UserSerializer(status_user).data,
+            'organization': OrganizationSerializer(serializer_org).data
+        }
+
+        return Response(data)
 
 class EditOrganizationView(APIView):
     def put(self, request):
         pass
+
+class LoginView(APIView):
+    def post(self, request):
+        try:
+            user = User.objects.get(email=request.data['email'])
+            user_response = UserSerializer(user).data
+            data = {
+                'user': user_response,
+                'token': 'super_token123'
+            }
+
+            return Response(data)
+
+        except User.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)

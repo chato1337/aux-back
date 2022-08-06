@@ -28,24 +28,37 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         exclude = []
 
+class UserFlatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        exclude = []
+
 class CreateUserSerializer(serializers.Serializer):
     role = serializers.PrimaryKeyRelatedField(queryset=Role.objects.all())
     name = serializers.CharField(max_length=70, validators=[UniqueValidator(queryset=User.objects.all())])
     email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
     phone = serializers.CharField(max_length=12, validators=[UniqueValidator(queryset=User.objects.all())])
     password = serializers.CharField(max_length=64)
-    is_active = serializers.BooleanField()
+    status = serializers.CharField(max_length=24)
+    # is_active = serializers.BooleanField()
     # created_at = serializers.DateTimeField()
 
     def create(self, data):
         return User.objects.create(**data)
 
     def update(self, instance, validated_data):
-        #test??
-        return super().update(instance, validated_data)
+        instance.role = validated_data.get('role', instance.role)
+        instance.name = validated_data.get('name', instance.name)
+        instance.email = validated_data.get('email', instance.email)
+        instance.phone = validated_data.get('phone', instance.phone)
+        instance.password = validated_data.get('password', instance.password)
+        instance.status = validated_data.get('status', instance.status)
+        instance.save()
+
+        return instance
 
     class Meta:
-        extra_kwargs = {'created_at': {'required': False}}
+        extra_kwargs = {'created_at': {'required': False}, 'is_active': {'required': False}}
 
 class StaffSerializer(serializers.ModelSerializer):
     user = UserSerializer()

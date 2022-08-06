@@ -19,5 +19,6 @@ urlpatterns = [
     path('customer/add/', views.AddCustomerView.as_view(), name="add-customer"),
     path('organization/', views.GetOrganizationView.as_view(), name="organization"),
     path('organization/add/', views.AddOrganizationView.as_view(), name="add-organization"),
-    path('organization/edit/', views.EditOrganizationView.as_view(), name="edit-organization")
+    path('organization/edit/', views.EditOrganizationView.as_view(), name="edit-organization"),
+    path('login/', views.LoginView.as_view(), name="login"),
 ]

@@ -8,11 +8,12 @@ class Role(models.Model):
 
 class User(models.Model):
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
-    name = models.CharField(max_length=70)
+    name = models.CharField(max_length=70, unique=True)
     email = models.CharField(max_length=20, unique=True)
     phone = models.CharField(max_length=12, unique=True)
     password = models.CharField(max_length=64)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
+    status = models.CharField(max_length=24, default="disabled")
     created_at = models.DateTimeField(auto_now=True)
 
 class Staff(models.Model):
