@@ -3,7 +3,7 @@ from inventory.models import Product
 from user.models import Customer, Staff
 
 # Create your models here.
-class Bill(models.Model):
+class Invoice(models.Model):
     created_at = models.DateTimeField(auto_now=True)
     customer = models.ForeignKey(Customer, on_delete=models.CASCADE)
     seller = models.ForeignKey(Staff, on_delete=models.CASCADE)
@@ -15,7 +15,7 @@ class Bill(models.Model):
 
 class Order(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    bill = models.ForeignKey(Bill, related_name="orders", on_delete=models.CASCADE)
+    invoice = models.ForeignKey(Invoice, related_name="orders", on_delete=models.CASCADE)
     quantity = models.IntegerField()
     discount = models.IntegerField()
     total = models.FloatField()

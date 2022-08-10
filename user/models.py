@@ -31,7 +31,7 @@ class Customer(models.Model):
 
 class Organization(models.Model):
     name = models.CharField(max_length=32, unique=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, related_name="organization", on_delete=models.CASCADE)
     identifier = models.CharField(max_length=17, unique=True)
     phone = models.PositiveBigIntegerField(unique=True)
     address = models.CharField(max_length=64)

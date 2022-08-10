@@ -63,11 +63,11 @@ class AddUserView(APIView):
 
         staff_data = { **request.data, 'user': user_serializer['id'] }
         staff_serializer = CreateStaffSerializer(data=staff_data)
-        staff_serializer.is_valid(raise_exception=True)
-        staff_serializer.save()
+        created_staff = staff_serializer.is_valid(raise_exception=True)
+        created_staff.save()
 
         data = {
-            'user': user_serializer,
+            'staff': StaffSerializer(created_staff).data,
             'token': 'awesometoken123'
         }
 
@@ -139,10 +139,11 @@ class AddOrganizationView(APIView):
         update_user = CreateUserSerializer(user, user_status)
         update_user.is_valid(raise_exception=True)
         serializer_org = serializer.save()
-        status_user = update_user.save()
+        update_user.save()
+        staff_user = Staff.objects.get(pk=staff_user)
 
         data = {
-            'user': UserSerializer(status_user).data,
+            'staff': StaffSerializer(staff_user).data,
             'organization': OrganizationSerializer(serializer_org).data
         }
 
@@ -156,9 +157,12 @@ class LoginView(APIView):
     def post(self, request):
         try:
             user = User.objects.get(email=request.data['email'])
-            user_response = UserSerializer(user).data
+            user_serializer = UserSerializer(user).data
+            staff = Staff.objects.get(user=user_serializer['id'])
+            organization = None
             data = {
-                'user': user_response,
+                'staff': StaffSerializer(staff).data,
+                'organization': organization,
                 'token': 'super_token123'
             }
 

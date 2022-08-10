@@ -5,6 +5,6 @@ from stock import views
 
 
 urlpatterns = [
-    path('bill/', views.GetBillView.as_view(), name="bill"),
-    path('bill/add/', views.AddBillView.as_view(), name="add-bill"),
+    path('invoice/', views.GetInvoiceView.as_view(), name="invoice"),
+    path('invoice/add/', views.AddInvoiceView.as_view(), name="add-invoice"),
 ]
