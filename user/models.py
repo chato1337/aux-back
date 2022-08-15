@@ -1,4 +1,3 @@
-from turtle import ondrag
 from django.db import models
 
 # Create your models here.
@@ -7,6 +6,8 @@ class Role(models.Model):
     description = models.CharField(max_length=300)
 
 class User(models.Model):
+    identifier = models.CharField(max_length=12, null=True, unique=True)
+    id_type = models.CharField(max_length=10, default="CC")
     role = models.ForeignKey(Role, on_delete=models.CASCADE)
     name = models.CharField(max_length=70, unique=True)
     email = models.CharField(max_length=20, unique=True)

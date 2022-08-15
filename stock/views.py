@@ -13,7 +13,7 @@ class GetInvoiceView(generics.ListAPIView):
     serializer_class = InvoiceSerializer
     filter_backends = (SearchFilter, OrderingFilter)
     search_fields = ('id',)
-    ordering_fields = ('created_at', 'id',)
+    ordering_fields = ('created_at', 'id', 'total', 'customer')
 
     def get_queryset(self):
         return Invoice.objects.all()
@@ -25,16 +25,16 @@ class AddInvoiceView(APIView):
 
         #create new bill
         new_invoice = {
-            'customer': 1,
-            'seller': 1,
-            'payment_type': 'cash',
-            'total': total
+            'customer': request.data['customer'],
+            'seller': request.data['seller'],
+            'payment_type': request.data['payment_type'],
+            'total': request.data['total']
         }
         invoice_serializer = CreateInvoiceSerializer(data=new_invoice)
         invoice_serializer.is_valid(raise_exception=True)
-
         invoice = invoice_serializer.save()
-        for item in request.data:
+
+        for item in request.data['products']:
             #update stock for every product buyed in order
             product = Product.objects.get(pk=item['id'])
             product_dict = ProductSerializer(product).data

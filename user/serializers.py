@@ -1,3 +1,4 @@
+from wsgiref.validate import validator
 from rest_framework import serializers
 from user.models import Customer, Organization, Role, Staff, User
 from rest_framework.validators import UniqueValidator
@@ -62,6 +63,8 @@ class CreateUserSerializer(serializers.Serializer):
     phone = serializers.CharField(max_length=12, validators=[UniqueValidator(queryset=User.objects.all())])
     password = serializers.CharField(max_length=64)
     status = serializers.CharField(max_length=24)
+    id_type = serializers.CharField(max_length=10)
+    identifier = serializers.CharField(max_length=10, validators=[UniqueValidator(queryset=User.objects.all())])
     # is_active = serializers.BooleanField()
     # created_at = serializers.DateTimeField()
 

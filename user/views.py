@@ -100,15 +100,36 @@ class EditStaffView(APIView):
 class GetCustomerView(generics.ListAPIView):
     serializer_class = CustomerSerializer
     filter_backends = (SearchFilter, OrderingFilter)
-    search_fields = ('first_name',)
-    ordering_fields = ('first_name', 'last_name', 'address',)
+    search_fields = ('fullname',)
+    ordering_fields = ('id', 'user', 'fullname', 'leverage',)
 
     def get_queryset(self):
         return Customer.objects.all()
 
 class AddCustomerView(APIView):
     def post(self, request):
-        serializer = CreateCustomerSerializer(data=request.data)
+        #create user
+        username = request.data['email'].replace('@', '_')
+        #getting role for customer
+        role = Role.objects.get(name='customer')
+        #parse to dict
+        role_serializer = RoleSerializer(role).data
+        user_data = {
+            **request.data,
+            'name': username,
+            'role': role_serializer['id'],
+            'status': 'to-activate',
+            'password': 'invalid-passwd'
+        }
+        user_serializer = CreateUserSerializer(data=user_data)
+        user_serializer.is_valid(raise_exception=True)
+        created_user = user_serializer.save()
+        #parse to dict
+        user = UserSerializer(created_user).data
+
+        #create customer
+        customer_data = { **request.data, 'user': user['id'] }
+        serializer = CreateCustomerSerializer(data=customer_data)
         serializer.is_valid(raise_exception=True)
         customer = serializer.save()
 
