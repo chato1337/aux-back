@@ -17,12 +17,6 @@ class User(models.Model):
     status = models.CharField(max_length=24, default="disabled")
     created_at = models.DateTimeField(auto_now=True)
 
-class Staff(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    first_name = models.CharField(max_length=35)
-    last_name = models.CharField(max_length=35)
-    address = models.CharField(max_length=60)
-    created_at = models.DateTimeField(auto_now=True)
 
 class Customer(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -40,3 +34,10 @@ class Organization(models.Model):
 
     def __str__(self) -> str:
         return f"{self.name} {self.identifier}"
+
+class Staff(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    first_name = models.CharField(max_length=35)
+    last_name = models.CharField(max_length=35)
+    address = models.CharField(max_length=60)
+    created_at = models.DateTimeField(auto_now=True)

@@ -22,7 +22,13 @@ class CreateRoleSerializer(serializers.Serializer):
 
         return instance
 
+class UserFlatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        exclude = []
+
 class OrganizationSerializer(serializers.ModelSerializer):
+    owner = UserFlatSerializer()
 
     class Meta:
         model = Organization
@@ -51,10 +57,6 @@ class UserSerializer(serializers.ModelSerializer):
         model = User
         exclude = []
 
-class UserFlatSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        exclude = []
 
 class CreateUserSerializer(serializers.Serializer):
     role = serializers.PrimaryKeyRelatedField(queryset=Role.objects.all())
@@ -64,7 +66,7 @@ class CreateUserSerializer(serializers.Serializer):
     password = serializers.CharField(max_length=64)
     status = serializers.CharField(max_length=24)
     id_type = serializers.CharField(max_length=10)
-    identifier = serializers.CharField(max_length=10, validators=[UniqueValidator(queryset=User.objects.all())])
+    identifier = serializers.CharField(max_length=12, validators=[UniqueValidator(queryset=User.objects.all())])
     # is_active = serializers.BooleanField()
     # created_at = serializers.DateTimeField()
 
@@ -78,6 +80,8 @@ class CreateUserSerializer(serializers.Serializer):
         instance.phone = validated_data.get('phone', instance.phone)
         instance.password = validated_data.get('password', instance.password)
         instance.status = validated_data.get('status', instance.status)
+        instance.id_type = validated_data.get('id_type', instance.id_type)
+        instance.identifier = validated_data.get('identifier', instance.identifier)
         instance.save()
 
         return instance
