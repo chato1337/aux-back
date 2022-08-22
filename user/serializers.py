@@ -96,19 +96,31 @@ class StaffSerializer(serializers.ModelSerializer):
         model = Staff
         exclude = []
 
+class StaffFlatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Staff
+        exclude = []
+
 class CreateStaffSerializer(serializers.Serializer):
     user = serializers.PrimaryKeyRelatedField(queryset=User.objects.all())
     first_name = serializers.CharField(max_length=35)
     last_name = serializers.CharField(max_length=35)
     address = serializers.CharField(max_length=60)
+    organization = serializers.PrimaryKeyRelatedField(queryset=Organization.objects.all(), allow_null=True)
     # created_at = serializers.DateTimeField()
 
     def create(self, data):
         return Staff.objects.create(**data)
 
     def update(self, instance, validated_data):
-        return super().update(instance, validated_data)
+        instance.user = validated_data.get('user', instance.user)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.last_name = validated_data.get('last_name', instance.last_name)
+        instance.address = validated_data.get('address', instance.address)
+        instance.organization = validated_data.get('organization', instance.organization)
+        instance.save()
 
+        return instance
     class Meta:
         extra_kwargs = {'created_at': {'required': False}}
 

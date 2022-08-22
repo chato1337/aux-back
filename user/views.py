@@ -15,6 +15,7 @@ from user.serializers import (
     CustomerSerializer,
     OrganizationSerializer,
     RoleSerializer,
+    StaffFlatSerializer,
     StaffSerializer,
     UserFlatSerializer,
     UserSerializer
@@ -52,19 +53,25 @@ class GetUserView(generics.ListAPIView):
 
 class AddUserView(APIView):
     def post(self, request):
+        #generate username
         username = request.data['email'].replace('@', '_')
+
+        #get role with owner role stored in db
         role = Role.objects.get(name='owner')
         role_serializer = RoleSerializer(role).data
+
+        # create user
         user_data = { **request.data, 'name': username, 'role': role_serializer['id'], 'status': 'to-activate' }
         serializer = CreateUserSerializer(data=user_data)
         serializer.is_valid(raise_exception=True)
         user = serializer.save()
         user_serializer = UserSerializer(user).data
 
-        staff_data = { **request.data, 'user': user_serializer['id'] }
+        # create staff
+        staff_data = { **request.data, 'user': user_serializer['id'], 'organization': None }
         staff_serializer = CreateStaffSerializer(data=staff_data)
-        created_staff = staff_serializer.is_valid(raise_exception=True)
-        created_staff.save()
+        staff_serializer.is_valid(raise_exception=True)
+        created_staff = staff_serializer.save()
 
         data = {
             'staff': StaffSerializer(created_staff).data,
@@ -149,23 +156,32 @@ class GetOrganizationView(generics.ListAPIView):
 
 class AddOrganizationView(APIView):
     def post(self, request):
+        # create organization
         serializer = CreateOrganizationSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        user = User.objects.get(pk=request.data['owner'])
+        # update status for org owner db instance
+        org_owner = User.objects.get(pk=request.data['owner'])
+        org_owner_serializer = UserFlatSerializer(org_owner).data
+        payload_status = { **org_owner_serializer, 'status': 'active' }
 
-        user_serializer = UserFlatSerializer(user).data
-        user_status = { **user_serializer, 'status': 'active' }
-
-        update_user = CreateUserSerializer(user, user_status)
+        update_user = CreateUserSerializer(org_owner, payload_status)
         update_user.is_valid(raise_exception=True)
-        serializer_org = serializer.save()
+        new_organization = serializer.save()
+        org_serializer = OrganizationSerializer(new_organization).data
         update_user.save()
-        staff_user = Staff.objects.get(pk=staff_user)
+
+        # get updated staff user with org db instance
+        staff_user = Staff.objects.get(user=org_owner_serializer["id"])
+        staff_serializer = StaffFlatSerializer(staff_user).data
+        payload_org = { **staff_serializer, 'organization': org_serializer['id'] }
+        updated_staff = CreateStaffSerializer(staff_user, payload_org)
+        updated_staff.is_valid(raise_exception=True)
+        final_staff = updated_staff.save()
 
         data = {
-            'staff': StaffSerializer(staff_user).data,
-            'organization': OrganizationSerializer(serializer_org).data
+            'staff': StaffSerializer(final_staff).data,
+            'organization': org_serializer
         }
 
         return Response(data)

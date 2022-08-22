@@ -41,3 +41,4 @@ class Staff(models.Model):
     last_name = models.CharField(max_length=35)
     address = models.CharField(max_length=60)
     created_at = models.DateTimeField(auto_now=True)
+    organization = models.ForeignKey(Organization, on_delete=models.CASCADE, null=True)
