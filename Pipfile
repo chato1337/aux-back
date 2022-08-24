@@ -12,6 +12,7 @@ markdown = "*"
 django-filter = "*"
 django-extensions = "*"
 pyjwt = "*"
+djangorestframework-simplejwt = "*"
 
 [dev-packages]
 

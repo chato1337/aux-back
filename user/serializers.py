@@ -1,7 +1,8 @@
-from wsgiref.validate import validator
 from rest_framework import serializers
 from user.models import Customer, Organization, Role, Staff, User
 from rest_framework.validators import UniqueValidator
+from django.contrib.auth.hashers import make_password
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 class RoleSerializer(serializers.ModelSerializer):
     class Meta:
@@ -63,15 +64,19 @@ class CreateUserSerializer(serializers.Serializer):
     name = serializers.CharField(max_length=70, validators=[UniqueValidator(queryset=User.objects.all())])
     email = serializers.EmailField(validators=[UniqueValidator(queryset=User.objects.all())])
     phone = serializers.CharField(max_length=12, validators=[UniqueValidator(queryset=User.objects.all())])
-    password = serializers.CharField(max_length=64)
+    password = serializers.CharField(max_length=128)
     status = serializers.CharField(max_length=24)
     id_type = serializers.CharField(max_length=10)
     identifier = serializers.CharField(max_length=12, validators=[UniqueValidator(queryset=User.objects.all())])
     # is_active = serializers.BooleanField()
     # created_at = serializers.DateTimeField()
 
+
     def create(self, data):
-        return User.objects.create(**data)
+        password = make_password(data['password'])
+        new_user = { **data, 'password': password }
+
+        return User.objects.create(**new_user)
 
     def update(self, instance, validated_data):
         instance.role = validated_data.get('role', instance.role)
@@ -146,3 +151,5 @@ class CreateCustomerSerializer(serializers.Serializer):
     class Meta:
         extra_kwargs = {'created_at': {'required': False}}
 
+class UserLoginSerializer(TokenObtainPairSerializer):
+    pass
