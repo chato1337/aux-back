@@ -88,21 +88,47 @@ class GetStaffView(generics.ListAPIView):
     serializer_class = StaffSerializer
     filter_backends = (SearchFilter, OrderingFilter)
     search_fields = ('first_name',)
-    ordering_fields = ('first_name', 'last_name', 'address',)
+    ordering_fields = ('id', 'first_name', 'last_name', 'address',)
 
     def get_queryset(self):
-        return Staff.objects.all()
+        # get only organziation employs
+        owner = self.request.query_params.get('owner')
+        return Staff.objects.filter(organization=owner)
 
 class AddStaffView(APIView):
     def post(self, request):
-        serializer = CreateStaffSerializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        staff = serializer.save()
+        #generate username
+        username = request.data['email'].replace('@', '_')
 
-        return Response(StaffSerializer(staff).data)
+        #get role with owner role stored in db
+        role = Role.objects.get(name='employ')
+        role_serializer = RoleSerializer(role).data
+
+        # create user
+        user_data = { **request.data, 'name': username, 'role': role_serializer['id'], 'status': 'active' }
+        serializer = CreateUserSerializer(data=user_data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.save()
+        user_serializer = UserSerializer(user).data
+
+        # create staff
+        staff_data = { **request.data, 'user': user_serializer['id']}
+        staff_serializer = CreateStaffSerializer(data=staff_data)
+        staff_serializer.is_valid(raise_exception=True)
+        created_staff = staff_serializer.save()
+
+        return Response(StaffSerializer(created_staff).data)
 
 class EditStaffView(APIView):
-    pass
+    def put(self, request):
+        staff = Staff.objects.get(pk=request.data["id"])
+        serializer_staff = StaffFlatSerializer(staff).data
+        payload_staff = { **serializer_staff, **request.data }
+        edit_staff = CreateStaffSerializer(staff, data=payload_staff)
+        edit_staff.is_valid(raise_exception=True)
+        updated_staff = edit_staff.save()
+
+        return Response(StaffSerializer(updated_staff).data)
 
 class GetCustomerView(generics.ListAPIView):
     serializer_class = CustomerSerializer
@@ -196,10 +222,10 @@ class LoginView(APIView):
             user = User.objects.get(email=request.data['email'])
             user_serializer = UserSerializer(user).data
             staff = Staff.objects.get(user=user_serializer['id'])
-            organization = None
+            organization = Organization.objects.get(owner=user_serializer['id'])
             data = {
                 'staff': StaffSerializer(staff).data,
-                'organization': organization,
+                'organization': OrganizationSerializer(organization).data,
                 'token': 'super_token123'
             }
 
