@@ -18,7 +18,7 @@ services:
           POSTGRES_PASSWORD: ${DATABASE_PASS}
           PGUSER: ${DATABASE_USER}
         ports:
-          - '5431:5431'
+          - '${DATABASE_PORT}:${DATABASE_PORT}'
         expose:
           # Opens port 3306 on the container
           - ${DATABASE_PORT}
