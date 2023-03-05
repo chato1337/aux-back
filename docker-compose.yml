@@ -22,7 +22,7 @@ services:
         expose:
           # Opens port 3306 on the container
           - ${DATABASE_PORT}
-        command: -p 5431
+        command: -p ${DATABASE_PORT}
 
     web:
         build: .
