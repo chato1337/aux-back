@@ -21,8 +21,10 @@ class GetView(generics.ListAPIView):
     ordering_fields = ('name', 'unit', 'entry_date', 'id', 'category')
 
     def get_queryset(self):
-        queryset = Product.objects.all()
-        return queryset
+        is_featured = self.request.query_params.get('featured')
+        if(is_featured):
+            return Product.objects.filter(is_featured=True)
+        return Product.objects.all()
 
 
 class AddView(APIView):

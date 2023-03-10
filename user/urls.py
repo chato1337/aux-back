@@ -20,5 +20,6 @@ urlpatterns = [
     path('organization/', views.GetOrganizationView.as_view(), name="organization"),
     path('organization/add/', views.AddOrganizationView.as_view(), name="add-organization"),
     path('organization/edit/', views.EditOrganizationView.as_view(), name="edit-organization"),
+    path('organization/<int:pk>', views.ShowOrganizationView.as_view(), name="show-organization"),
     path('login/', views.LoginView.as_view(), name="login"),
 ]

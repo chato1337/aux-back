@@ -30,6 +30,7 @@ class Product(models.Model):
     stock = models.IntegerField()
     unit = models.CharField(max_length=32)
     is_active = models.CharField(max_length=16, default="active")
+    is_featured = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name

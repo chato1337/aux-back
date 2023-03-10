@@ -221,6 +221,10 @@ class EditOrganizationView(APIView):
     def put(self, request):
         pass
 
+class ShowOrganizationView(generics.RetrieveAPIView):
+    queryset = Organization.objects.all()
+    serializer_class = OrganizationSerializer
+
 class LoginView(TokenObtainPairView):
     serializer_class = UserLoginSerializer
 

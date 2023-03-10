@@ -31,6 +31,7 @@ class Organization(models.Model):
     phone = models.PositiveBigIntegerField(unique=True)
     address = models.CharField(max_length=64)
     email = models.EmailField(unique=True)
+    logo = models.CharField(max_length=200, null=True)
 
     def __str__(self) -> str:
         return f"{self.name} {self.identifier}"

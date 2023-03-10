@@ -65,6 +65,7 @@ class CreateProductSerializer(serializers.Serializer):
     entry_date = serializers.DateTimeField()
     stock = serializers.IntegerField()
     unit = serializers.CharField(max_length=32)
+    is_featured = serializers.BooleanField()
     # is_active = serializers.CharField(max_length=16)
 
     def create(self, data):
@@ -80,6 +81,7 @@ class CreateProductSerializer(serializers.Serializer):
         instance.entry_date = validated_data.get('entry_date', instance.entry_date)
         instance.stock = validated_data.get('stock', instance.stock)
         instance.unit = validated_data.get('unit', instance.unit)
+        instance.is_featured = validated_data.get('is_featured', instance.is_featured)
         instance.is_active = validated_data.get('is_active', 'active')
         instance.save()
 
