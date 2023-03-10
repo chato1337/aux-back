@@ -6,6 +6,7 @@ from inventory import views
 
 urlpatterns = [
     path('product/', views.GetView.as_view(), name="product"),
+    path('product/category/', views.ProductCategoryView.as_view(), name="product-category"),
     path('product/add/', views.AddView.as_view(), name="add-product"),
     path('product/edit/', views.EditView.as_view(), name="edit-product"),
     path('supplier/', views.GetSuppliersView.as_view(), name="supplier"),

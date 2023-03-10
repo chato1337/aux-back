@@ -36,6 +36,7 @@ class CreateCategorySerializer(serializers.Serializer):
     # name = serializers.CharField(max_length=30)
     name = serializers.CharField(max_length=30, validators=[UniqueValidator(queryset=Category.objects.all())])
     description = serializers.CharField(max_length=300)
+    is_featured = serializers.BooleanField()
 
     def create(self, data):
         return Category.objects.create(**data)
@@ -43,6 +44,7 @@ class CreateCategorySerializer(serializers.Serializer):
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.description = validated_data.get('description', instance.description)
+        instance.is_featured = validated_data.get('is_featured', instance.is_featured)
         instance.save()
 
         return instance
@@ -53,6 +55,18 @@ class ProductSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Product
+        exclude = []
+
+class ProductFlatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Product
+        exclude = []
+
+
+class ProductCategorySerializer(serializers.ModelSerializer):
+    product = ProductFlatSerializer(many=True)
+    class Meta:
+        model = Category
         exclude = []
 
 class CreateProductSerializer(serializers.Serializer):

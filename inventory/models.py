@@ -4,6 +4,7 @@ from django.db import models
 class Category(models.Model):
     name = models.CharField(max_length=30, unique=True)
     description = models.CharField(max_length=300)
+    is_featured = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -24,7 +25,7 @@ class Product(models.Model):
     name = models.CharField(max_length=64)
     description = models.CharField(max_length=300)
     price = models.FloatField()
-    category = models.ForeignKey(Category, null=True, on_delete=models.CASCADE)
+    category = models.ForeignKey(Category, related_name="product",null=True, on_delete=models.CASCADE)
     expiration_date = models.DateField()
     entry_date = models.DateField(auto_now=True)
     stock = models.IntegerField()

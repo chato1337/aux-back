@@ -10,6 +10,7 @@ from inventory.serializers import (
     CreateCategorySerializer,
     CreateProductSerializer,
     CreateSupplierSerializer,
+    ProductCategorySerializer,
     ProductSerializer,
     SupplierSerializer
 )
@@ -46,6 +47,12 @@ class EditView(APIView):
         updated_product = serializer.save()
 
         return Response(ProductSerializer(updated_product).data)
+
+class ProductCategoryView(generics.ListAPIView):
+    serializer_class = ProductCategorySerializer
+    def get_queryset(self):
+        return Category.objects.filter(is_featured=True)
+
 
 class GetSuppliersView(generics.ListAPIView):
     serializer_class = SupplierSerializer
