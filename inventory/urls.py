@@ -15,5 +15,6 @@ urlpatterns = [
     path('category/', views.GetCategoryView.as_view(), name="category"),
     path('category/full/', views.GetCategoryView.as_view(), name="category-full"),
     path('category/edit/', views.EditCategoryView.as_view(), name="edit-category"),
-    path('category/add/', views.AddCategoryView.as_view(), name="add-category")
+    path('category/add/', views.AddCategoryView.as_view(), name="add-category"),
+    path('brands/', views.CountBrandsView.as_view(), name="count-brands")
 ]

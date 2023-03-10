@@ -31,6 +31,8 @@ class Product(models.Model):
     unit = models.CharField(max_length=32)
     is_active = models.CharField(max_length=16, default="active")
     is_featured = models.BooleanField(default=False)
+    brand = models.CharField(max_length=30, default="generic")
+    image = models.CharField(max_length=150, null=True)
 
     def __str__(self):
         return self.name

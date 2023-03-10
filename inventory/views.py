@@ -4,6 +4,7 @@ from rest_framework.response import Response
 from rest_framework import generics
 from rest_framework.filters import SearchFilter, OrderingFilter
 from inventory.models import Category, Product, Supplier
+from django.db.models import Count
 from inventory.serializers import (
     CategorySerializer,
     CreateCategorySerializer,
@@ -111,3 +112,8 @@ class EditCategoryView(APIView):
         updated_category = serializer.save()
 
         return Response(CategorySerializer(updated_category).data)
+
+class CountBrandsView(APIView):
+    def get(self, request):
+        queryset = Product.objects.values('brand').annotate(qty=Count('brand'))
+        return Response(queryset)
