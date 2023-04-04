@@ -42,7 +42,7 @@ class CreateOrganizationSerializer(serializers.Serializer):
     phone = serializers.IntegerField()
     address = serializers.CharField(max_length=64)
     email = serializers.EmailField()
-    logo = serializers.BooleanField()
+    logo = serializers.CharField(max_length=35)
 
     def create(self, data):
         return Organization.objects.create(**data)
