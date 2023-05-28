@@ -51,7 +51,8 @@ INSTALLED_APPS = [
     'django_extensions',
     'inventory',
     'stock',
-    'user'
+    'user',
+    'dinner'
 ]
 
 MIDDLEWARE = [
